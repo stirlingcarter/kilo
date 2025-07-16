@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concert Tracker App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 25px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .slide {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+        }
+        
+        .slide.active {
+            display: flex;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 0 20px;
+            overflow-y: auto;
+        }
+        
+        .bottom-nav {
+            height: 83px;
+            background: #111;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #333;
+            padding-bottom: 34px;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 12px;
+        }
+        
+        .nav-item.active {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+        
+        .nav-item:not(.active) {
+            color: #666;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .nav-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        /* Search Tab Styles */
+        .search-container {
+            padding: 20px 0;
+        }
+        
+        .search-bar {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 16px;
+            color: #fff;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar::placeholder {
+            color: #888;
+        }
+        
+        .concert-list {
+            gap: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .concert-item {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .concert-item:hover {
+            background: #222;
+            border-color: #667eea;
+        }
+        
+        .concert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 8px;
+        }
+        
+        .concert-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .concert-date {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .concert-venue {
+            font-size: 14px;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+        
+        .concert-location {
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        /* Feed Tab Styles */
+        .feed-header {
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        
+        .feed-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .feed-item {
+            background: #111;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #333;
+        }
+        
+        .feed-user {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .rating-stars {
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+        
+        .feed-concert-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .feed-note {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        
+        .feed-photo {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 12px 0 8px;
+            background-color: #222;
+        }
+        
+        .feed-time {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        /* Profile Tab Styles */
+        .profile-header {
+            padding: 30px 0;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 600;
+        }
+        
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        .profile-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: #111;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-item:hover {
+            background: #222;
+        }
+        
+        .option-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            color: #667eea;
+        }
+        
+        .option-text {
+            flex: 1;
+            color: #fff;
+        }
+        
+        .option-arrow {
+            color: #666;
+        }
+        
+        .slide-nav {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        
+        .slide-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .slide-dot.active {
+            background: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <!-- Slide 1: Search Tab -->
+            <div class="slide active">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span>🔋 100%</span>
+                </div>
+                
+                <div class="main-content">
+                    <div class="search-container">
+                        <input type="text" class="search-bar" placeholder="Search concerts, artists, venues..." id="searchInput">
+                        
+                        <div class="concert-list" id="concertList">
+                            <div class="concert-item">
+                                <div class="concert-header">
+                                    <div class="concert-title">Stussy</div>
+                                    <div class="concert-date">Feb 4</div>
+                                </div>
+                                <div class="concert-venue">Knockdown Center</div>
+                                <div class="concert-location">NYC</div>
+                            </div>
+                            
+                            <div class="concert-item">
+                                <div class="concert-header">
+                                    <div class="concert-title">Bicep</div>
+                                    <div class="concert-date">Jan 28</div>
+                                </div>
+                                <div class="concert-venue">Brooklyn Mirage</div>
+                                <div class="concert-location">NYC</div>
+                            </div>
+                            
+                            <div class="concert-item">
+                                <div class="concert-header">
+                                    <div class="concert-title">Charlotte de Witte</div>
+                                    <div class="concert-date">Mar 15</div>
+                                </div>
+                                <div class="concert-venue">Avant Gardner</div>
+                                <div class="concert-location">NYC</div>
+                            </div>
+                            
+                            <div class="concert-item">
+                                <div class="concert-header">
+                                    <div class="concert-title">Four Tet</div>
+                                    <div class="concert-date">Feb 22</div>
+                                </div>
+                                <div class="concert-venue">Terminal 5</div>
+                                <div class="concert-location">NYC</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item active" onclick="showSlide(0)">
+                        <div class="nav-icon">🔍</div>
+                        <div class="nav-text">Search</div>
+                    </div>
+                    <div class="nav-item" onclick="showSlide(1)">
+                        <div class="nav-icon">📱</div>
+                        <div class="nav-text">Feed</div>
+                    </div>
+                    <div class="nav-item" onclick="showSlide(2)">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-text">Profile</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 2: Feed Tab -->
+            <div class="slide">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span>🔋 100%</span>
+                </div>
+                
+                <div class="main-content">
+                    <div class="feed-header">
+                        <div class="feed-title">Feed</div>
+                    </div>
+                    
+                    <div class="feed-item">
+                        <div class="feed-user">
+                            <div class="user-avatar">A</div>
+                            <div class="user-name">Alex Chen</div>
+                        </div>
+                        <img class="feed-photo" src="placeholder.png" alt="Concert photo">
+                        <div class="rating-stars">⭐⭐⭐⭐⭐</div>
+                        <div class="feed-concert-title">Bicep at Brooklyn Mirage</div>
+                        <div class="feed-note">Absolutely incredible set! The visuals were insane and the crowd energy was perfect. Best show I've been to this year.</div>
+                        <div class="feed-time">2 hours ago</div>
+                    </div>
+                    
+                    <div class="feed-item">
+                        <div class="feed-user">
+                            <div class="user-avatar">J</div>
+                            <div class="user-name">Jordan Kim</div>
+                        </div>
+                        <img class="feed-photo" src="placeholder.png" alt="Concert photo">
+                        <div class="rating-stars">⭐⭐⭐⭐</div>
+                        <div class="feed-concert-title">Four Tet at Terminal 5</div>
+                        <div class="feed-note">Really solid performance. Sound quality was great, though the venue felt a bit cramped. Would definitely see Four Tet again.</div>
+                        <div class="feed-time">1 day ago</div>
+                    </div>
+                    
+                    <div class="feed-item">
+                        <div class="feed-user">
+                            <div class="user-avatar">M</div>
+                            <div class="user-name">You</div>
+                        </div>
+                        <img class="feed-photo" src="placeholder.png" alt="Concert photo">
+                        <div class="rating-stars">⭐⭐⭐⭐⭐</div>
+                        <div class="feed-concert-title">Charlotte de Witte at Avant Gardner</div>
+                        <div class="feed-note">Pure techno bliss. CDW delivered exactly what I hoped for - dark, driving beats that had everyone moving. The production was top tier.</div>
+                        <div class="feed-time">3 days ago</div>
+                    </div>
+                    
+                    <div class="feed-item">
+                        <div class="feed-user">
+                            <div class="user-avatar">S</div>
+                            <div class="user-name">Sam Rivera</div>
+                        </div>
+                        <img class="feed-photo" src="placeholder.png" alt="Concert photo">
+                        <div class="rating-stars">⭐⭐⭐</div>
+                        <div class="feed-concert-title">Stussy at Knockdown Center</div>
+                        <div class="feed-note">Good vibes but the sound system had some issues during the first hour. Once they fixed it, the set was much better.</div>
+                        <div class="feed-time">1 week ago</div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="showSlide(0)">
+                        <div class="nav-icon">🔍</div>
+                        <div class="nav-text">Search</div>
+                    </div>
+                    <div class="nav-item active" onclick="showSlide(1)">
+                        <div class="nav-icon">📱</div>
+                        <div class="nav-text">Feed</div>
+                    </div>
+                    <div class="nav-item" onclick="showSlide(2)">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-text">Profile</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 3: Profile Tab -->
+            <div class="slide">
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span>🔋 100%</span>
+                </div>
+                
+                <div class="main-content">
+                    <div class="profile-header">
+                        <div class="profile-avatar">M</div>
+                        <div class="profile-name">Morgan Lee</div>
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">47</div>
+                                <div class="stat-label">Shows</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">4.2</div>
+                                <div class="stat-label">Avg Rating</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">23</div>
+                                <div class="stat-label">Venues</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <div class="section-title">Account</div>
+                        <div class="option-item">
+                            <div class="option-icon">✏️</div>
+                            <div class="option-text">Edit Profile</div>
+                            <div class="option-arrow">›</div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-icon">🔔</div>
+                            <div class="option-text">Notifications</div>
+                            <div class="option-arrow">›</div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-icon">🔒</div>
+                            <div class="option-text">Privacy</div>
+                            <div class="option-arrow">›</div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <div class="section-title">Activity</div>
+                        <div class="option-item">
+                            <div class="option-icon">⭐</div>
+                            <div class="option-text">My Reviews</div>
+                            <div class="option-arrow">›</div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-icon">📊</div>
+                            <div class="option-text">Stats</div>
+                            <div class="option-arrow">›</div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-icon">📅</div>
+                            <div class="option-text">Concert History</div>
+                            <div class="option-arrow">›</div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <div class="section-title">Support</div>
+                        <div class="option-item">
+                            <div class="option-icon">❓</div>
+                            <div class="option-text">Help & FAQ</div>
+                            <div class="option-arrow">›</div>
+                        </div>
+                        <div class="option-item">
+                            <div class="option-icon">💬</div>
+                            <div class="option-text">Contact Us</div>
+                            <div class="option-arrow">›</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="showSlide(0)">
+                        <div class="nav-icon">🔍</div>
+                        <div class="nav-text">Search</div>
+                    </div>
+                    <div class="nav-item" onclick="showSlide(1)">
+                        <div class="nav-icon">📱</div>
+                        <div class="nav-text">Feed</div>
+                    </div>
+                    <div class="nav-item active" onclick="showSlide(2)">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-text">Profile</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="slide-nav">
+        <div class="slide-dot active" onclick="showSlide(0)"></div>
+        <div class="slide-dot" onclick="showSlide(1)"></div>
+        <div class="slide-dot" onclick="showSlide(2)"></div>
+    </div>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.slide-dot');
+        const navItems = document.querySelectorAll('.nav-item');
+        
+        function showSlide(index) {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            // Show current slide
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Activate nav item in current slide
+            const currentSlideNavItems = slides[index].querySelectorAll('.nav-item');
+            currentSlideNavItems[index].classList.add('active');
+            
+            currentSlide = index;
+        }
+        
+        // Search functionality placeholder
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const concertItems = document.querySelectorAll('.concert-item');
+            
+            concertItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // In real app, this would be debounced API call
+            // debounce(() => {
+            //     fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`)
+            //         .then(response => response.json())
+            //         .then(data => updateConcertList(data));
+            // }, 300);
+        });
+        
+        // Concert item click handlers
+        document.querySelectorAll('.concert-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // In real app, this would navigate to concert detail/edit page
+                console.log('Navigate to concert detail:', this.querySelector('.concert-title').textContent);
+            });
+        });
+    </script>
+</body>
+</html>
