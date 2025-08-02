@@ -12,7 +12,15 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.colddata.kilograms",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSAppTransportSecurity": {
+          "NSExceptionDomains": {
+            "3.146.46.120": {
+              "NSIncludesSubdomains": true,
+              "NSExceptionAllowsInsecureHTTPLoads": true
+            }
+          }
+        }
       }
     },
     "android": {
@@ -21,6 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.colddata.kilograms",
+      "usesCleartextTraffic": true,
       "edgeToEdgeEnabled": true
     },
     "web": {
